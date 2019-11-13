@@ -62,10 +62,12 @@ function newPair(seed, accountIndex) {
   blake2bUpdate(context, index);
 
   var newKey = blake2bFinal(context);
+  var public_key = uint8_hex(nacl.sign.keyPair.fromSecretKey(newKey).publicKey)
 
   return {
-    secret: uint8_hex(newKey),
-    address: accountFromHexKey(uint8_hex(nacl.sign.keyPair.fromSecretKey(newKey).publicKey))
+    private_key: uint8_hex(newKey),
+    public_key: public_key,
+    address: accountFromHexKey(public_key)
   };
 }
 
@@ -93,7 +95,8 @@ document.getElementById('generatePair').addEventListener('click', function() {
 
   pairList.innerHTML += '<li><dl>' + [
     { label: 'Wallet Seed', value: seedInput.value },
-    { label: 'Account Key #' + accountIndex, value: pair.secret },
+    { label: 'Account Private Key #' + accountIndex, value: pair.private_key },
+    { label: 'Account Public Key', value: pair.public_key },
     { label: 'Address', value: pair.address },
   ].map(function(item) {
     return '<div><dt>' + item.label + ':</dt></div>' +
